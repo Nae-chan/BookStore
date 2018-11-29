@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">BookStore</string>
+
+    <!--Hint Text for fields in the Editor -->
+    <string name="hint_name">Name</string>
+    <string name="hint_price">Price$</string>
+    <string name="hint_quantity">Quantity</string>
+    <string name="hint_supplier_name">Supplier Name</string>
+    <string name="hint_supplier_number">Supplier Tel Number</string>
+
+    <!--Editor menu_editor options -->
+    <string name="action_save">Save</string>
+    <string name="action_delete">Delete</string>
+
+    <!--Catalog menu_catalog options -->
+    <string name="action_insert_dummy_data">Add Dummy Data</string>
+    <string name="action_delete_all_entries">Delete All Data</string>
+
+    <!--User input error messages-->
+    <string name="name_required">Name Required</string>
+    <string name="price_required">Price Required</string>
+    <string name="supplier_name_required">Supplier Name Required</string>
+    <string name="supplier_number_required">Supplier Phone Number Required</string>
+</resources>
