@@ -12,13 +12,53 @@
     <string name="action_save">Save</string>
     <string name="action_delete">Delete</string>
 
+    <!--Editor titles -->
+    <string name="editor_activity_title_edit">Edit Inventory</string>
+    <string name="editor_activity_title_new">Add New Inventory</string>
+
+    <!--Editor Buttons -->
+    <string name="clear_all">Clear All</string>
+    <string name="call_supplier">Call Supplier</string>
+
     <!--Catalog menu_catalog options -->
     <string name="action_insert_dummy_data">Add Dummy Data</string>
     <string name="action_delete_all_entries">Delete All Data</string>
+
+    <!--Catalog Quick Sale button -->
+    <string name="complete">Sold!</string>
+
+    <!--Confirmation messages when new inventory is added-->
+    <string name="editor_insert_successful">Product Added!</string>
+    <string name="editor_insert_failed">Error with saving product</string>
+
+    <!--Confirmation messages when inventory is updated-->
+    <string name="editor_update_successful">Product Updated!</string>
+    <string name="editor_update_failed">Error with updating product</string>
+
+    <!--Confirmation messages when inventory is updated-->
+    <string name="editor_delete_successful">Product Deleted!</string>
+    <string name="editor_delete_failed">Error with deleting product</string>
+
+    <!--List View Texts-->
+    <string name="sale_button">Quick Sale</string>
+
+    <!--Empty View Text-->
+    <string name="empty_title_text">There\'s Nothing Here!</string>
+    <string name="empty_subtitle_text">Press the plus button to add inventory.</string>
 
     <!--User input error messages-->
     <string name="name_required">Name Required</string>
     <string name="price_required">Price Required</string>
     <string name="supplier_name_required">Supplier Name Required</string>
-    <string name="supplier_number_required">Supplier Phone Number Required</string>
+    <string name="supplier_number_required">Valid Supplier Phone Number Required</string>
+    <string name="invalid">Invalid!</string>
+    <string name="cant_call">Phone Unavailable</string>
+
+    <!--Dialog Messages-->
+    <string name="delete_dialog">Are you sure you want to delete this?</string>
+    <string name="delete_confirm">Yes, Delete.</string>
+    <string name="stay_here">No, Stay Here!</string>
+    <string name="unsaved_changes"> Leave Without Saving?</string>
+    <string name="unsaved_confirm"> Yes, Leave</string>
+
 </resources>

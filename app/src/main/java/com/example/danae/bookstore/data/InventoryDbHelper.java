@@ -1,11 +1,11 @@
-package com.example.danae.bookstore.Data;
+package com.example.danae.bookstore.data;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.example.danae.bookstore.Data.InventoryContract.InventoryEntry;
+import com.example.danae.bookstore.data.InventoryContract.InventoryEntry;
 
 /**
  * This is the database helper that manages database creations
