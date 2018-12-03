@@ -544,9 +544,6 @@ public class EditorActivity extends AppCompatActivity implements
             mSupplierNameEditText.setText(supplierName);
             mSupplierNumberEditText.setText(supplierNumber);
 
-            //Format and set the supplier's phone number
-            //String formattedNumber = PhoneNumberUtils.formatNumber(supplierNumber);
-            //mSupplierNumberEditText.setText(formattedNumber);
         }
     }
 
