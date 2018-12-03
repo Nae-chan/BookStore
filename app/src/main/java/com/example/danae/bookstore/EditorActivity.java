@@ -233,9 +233,9 @@ public class EditorActivity extends AppCompatActivity implements
         String supplierNumberString = mSupplierNumberEditText.getText().toString().trim();
 
         //Read priceString as a number instead of text
-        int priceNumber = 0;
+        float priceNumber = 0;
         if (!TextUtils.isEmpty(priceString)) {
-            priceNumber = Integer.parseInt(priceString);
+            priceNumber = Float.parseFloat(priceString);
         }
 
         //Show catered error to user if there's an empty or invalid field
