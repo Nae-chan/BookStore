@@ -9,26 +9,22 @@ import android.provider.BaseColumns;
  */
 public final class InventoryContract {
 
-    private InventoryContract() {
-    }
-
-
     /**
      * The "Content authority" is a name for the entire content provider
      */
     public static final String CONTENT_AUTHORITY = "com.example.danae.bookstore";
-
     /**
      * Use CONTENT_AUTHORITY to create the base of all URI's which apps will use to contact
      * the content provider.
      */
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
-
     /**
      * Possible path (appended to base content URI for possible URI's)
      */
     public static final String PATH_INVENTORY = "inventory";
 
+    private InventoryContract() {
+    }
 
     /**
      * Inner class to define the constant values for the inventory database table.

@@ -12,7 +12,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
-import android.telephony.PhoneNumberUtils;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -62,6 +61,12 @@ public class EditorActivity extends AppCompatActivity implements
      * Boolean flag to track if items have been updated (true) or not (false)
      */
     private boolean mItemHasChanged = false;
+
+    /**
+     * Boolean to check if clearing data for an existing item
+     */
+
+    private boolean mClearAllSelected = false;
 
     /**
      * Boolean to check if user entered required fields
@@ -132,20 +137,17 @@ public class EditorActivity extends AppCompatActivity implements
         mClearAllDataButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mCurrentItemUri == null) {
-                    mNameEditText.setText("");
-                    mPriceEditText.setText("");
-                    mQuantityEditText.setText("");
-                    mSupplierNameEditText.setText("");
-                    mSupplierNumberEditText.setText("");
-                } else {
-                    mNameEditText.setText("");
-                    mPriceEditText.setText("");
-                    mQuantityEditText.setText("");
-                    mSupplierNameEditText.setText("");
-                    mSupplierNumberEditText.setText("");
+                //If adding a new item, clear all fields
+                mNameEditText.setText("");
+                mPriceEditText.setText("");
+                mQuantityEditText.setText("");
+                mSupplierNameEditText.setText("");
+                mSupplierNumberEditText.setText("");
+                if (mCurrentItemUri != null) {
+                    //If editing an item, regular validations still apply
                     mItemHasChanged = true;
                     validEntry = false;
+                    mClearAllSelected = true;
                 }
             }
         });
@@ -155,7 +157,14 @@ public class EditorActivity extends AppCompatActivity implements
             @Override
             public void onClick(View v) {
                 String supplierNumberString = mSupplierNumberEditText.getText().toString().trim();
-                Intent intent = new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", supplierNumberString, null));
+                //Check for valid number to call
+                if (supplierNumberString.length() < 10 || supplierNumberString.length() > 10) {
+                    Toast.makeText(EditorActivity.this,
+                            getString(R.string.supplier_number_required), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Intent intent = new Intent(Intent.ACTION_DIAL, Uri.fromParts
+                        ("tel", supplierNumberString, null));
                 if (intent.resolveActivity(getPackageManager()) != null) {
                     startActivity(intent);
                 }
@@ -195,9 +204,12 @@ public class EditorActivity extends AppCompatActivity implements
 
     // Decrease quantity and validate that quantity does not go below zero
     public String decreaseQuantity() {
-        int currentQuantity;
         String currentValue = mQuantityEditText.getText().toString();
-        currentQuantity = Integer.parseInt(currentValue);
+        if (currentValue.equalsIgnoreCase("")) {
+            currentValue = "0";
+        }
+        int currentQuantity = Integer.parseInt(currentValue);
+
         if (currentQuantity == 0) {
             Toast.makeText(this, R.string.invalid, Toast.LENGTH_SHORT).show();
             currentQuantity = 0;
@@ -220,24 +232,43 @@ public class EditorActivity extends AppCompatActivity implements
         String supplierNameString = mSupplierNameEditText.getText().toString().trim();
         String supplierNumberString = mSupplierNumberEditText.getText().toString().trim();
 
-        //Show catered error to user if there's an empty field
+        //Read priceString as a number instead of text
+        int priceNumber = 0;
+        if (!TextUtils.isEmpty(priceString)) {
+            priceNumber = Integer.parseInt(priceString);
+        }
+
+        //Show catered error to user if there's an empty or invalid field
         if (TextUtils.isEmpty(nameString)) {
-            Toast.makeText(this, getString(R.string.name_required), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.name_required),
+                    Toast.LENGTH_SHORT).show();
         } else if (TextUtils.isEmpty(priceString)) {
-            Toast.makeText(this, getString(R.string.price_required), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.price_required),
+                    Toast.LENGTH_SHORT).show();
+        } else if (priceNumber == 0) {
+            Toast.makeText(this, getString(R.string.price_required),
+                    Toast.LENGTH_SHORT).show();
         } else if (TextUtils.isEmpty(supplierNameString)) {
-            Toast.makeText(this, getString(R.string.supplier_name_required), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.supplier_name_required),
+                    Toast.LENGTH_SHORT).show();
         } else if (TextUtils.isEmpty(supplierNumberString)) {
-            Toast.makeText(this, getString(R.string.supplier_number_required), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.supplier_number_required),
+                    Toast.LENGTH_SHORT).show();
         } else if (supplierNumberString.length() < 10 || supplierNumberString.length() > 10) {
-            Toast.makeText(this, getString(R.string.supplier_number_required), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.supplier_number_required),
+                    Toast.LENGTH_SHORT).show();
         } else {
             validEntry = true;
         }
 
         //If No fields were updated, do not create Content Values
-        if (mCurrentItemUri == null && validEntry == false){
-            return; }
+        if (mCurrentItemUri == null && validEntry == false) {
+            return;
+        }
+        if (mCurrentItemUri != null && validEntry == false || mClearAllSelected == true) {
+            return;
+        }
+
 
         //Create ContentValues object with keys as column names and user input as values
         ContentValues values = new ContentValues();
@@ -254,15 +285,18 @@ public class EditorActivity extends AppCompatActivity implements
 
             //Display a toast stating if insertion was successful
             if (newUri == null) {
-                Toast.makeText(this, R.string.editor_insert_failed, Toast.LENGTH_LONG).show();
+                Toast.makeText(this, R.string.editor_insert_failed,
+                        Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(this, R.string.editor_insert_successful, Toast.LENGTH_LONG).show();
+                Toast.makeText(this, R.string.editor_insert_successful,
+                        Toast.LENGTH_SHORT).show();
             }
         } else {
             //Otherwise this item EXISTS; update the item with content URI and pass in new
             //ContentValues. Pass in null for selection and selection arg since mCurrentItemUri
             //already identifies row to modify.
-            int rowsAffected = getContentResolver().update(mCurrentItemUri, values, null, null);
+            int rowsAffected = getContentResolver().update(mCurrentItemUri, values,
+                    null, null);
 
             // Show a toast message depending on whether or not the update was successful.
             if (rowsAffected == 0) {
@@ -311,7 +345,6 @@ public class EditorActivity extends AppCompatActivity implements
                 if (validEntry) {
                     finish();
                 }
-                mItemHasChanged = false;
                 return true;
 
             // Respond to a click on the "Delete" menu_editor option
@@ -421,6 +454,7 @@ public class EditorActivity extends AppCompatActivity implements
         alertDialog.show();
     }
 
+
     /**
      * Prompt the user to confirm that they want to delete this item.
      */
@@ -455,9 +489,10 @@ public class EditorActivity extends AppCompatActivity implements
         // Only perform the delete if this is an existing item.
         if (mCurrentItemUri != null) {
             // Call the ContentResolver to delete the item at the given content URI.
-            // Pass in null for the selection and selection args because the mCurrentPetUri
+            // Pass in null for the selection and selection args because the mCurrentItemUri
             // content URI already identifies the item that we want.
-            int rowsDeleted = getContentResolver().delete(mCurrentItemUri, null, null);
+            int rowsDeleted = getContentResolver().delete(mCurrentItemUri,
+                    null, null);
 
             // Show a toast message depending on whether or not the delete was successful.
             if (rowsDeleted == 0) {
@@ -484,11 +519,16 @@ public class EditorActivity extends AppCompatActivity implements
         // Proceed with moving to the first row of the cursor and reading the data
         if (cursor.moveToFirst()) {
             // Find the columns of item attributes that we're interested in
-            int nameColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_PRODUCT_NAME);
-            int priceColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_PRICE);
-            int quantityColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_QUANTITY);
-            int supplierNameColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_SUPPLIER_NAME);
-            int supplierNumberColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_SUPPLIER_NUMBER);
+            int nameColumnIndex = cursor.getColumnIndex
+                    (InventoryEntry.COLUMN_PRODUCT_NAME);
+            int priceColumnIndex = cursor.getColumnIndex
+                    (InventoryEntry.COLUMN_PRICE);
+            int quantityColumnIndex = cursor.getColumnIndex
+                    (InventoryEntry.COLUMN_QUANTITY);
+            int supplierNameColumnIndex = cursor.getColumnIndex
+                    (InventoryEntry.COLUMN_SUPPLIER_NAME);
+            int supplierNumberColumnIndex = cursor.getColumnIndex
+                    (InventoryEntry.COLUMN_SUPPLIER_NUMBER);
 
             // Extract out the value from the Cursor for the given column index
             String name = cursor.getString(nameColumnIndex);
@@ -502,10 +542,11 @@ public class EditorActivity extends AppCompatActivity implements
             mPriceEditText.setText(price);
             mQuantityEditText.setText(quantity);
             mSupplierNameEditText.setText(supplierName);
+            mSupplierNumberEditText.setText(supplierNumber);
 
             //Format and set the supplier's phone number
-            String formattedNumber = PhoneNumberUtils.formatNumber(supplierNumber);
-            mSupplierNumberEditText.setText(formattedNumber);
+            //String formattedNumber = PhoneNumberUtils.formatNumber(supplierNumber);
+            //mSupplierNumberEditText.setText(formattedNumber);
         }
     }
 
@@ -517,6 +558,6 @@ public class EditorActivity extends AppCompatActivity implements
         mQuantityEditText.setText("");
         mSupplierNameEditText.setText("");
         mSupplierNumberEditText.setText("");
-        }
-
     }
+
+}

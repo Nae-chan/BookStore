@@ -24,6 +24,9 @@
     <string name="action_insert_dummy_data">Add Dummy Data</string>
     <string name="action_delete_all_entries">Delete All Data</string>
 
+    <!--Catalog Layout text-->
+    <string name="qty">QTY</string>
+
     <!--Catalog Quick Sale button -->
     <string name="complete">Sold!</string>
 
